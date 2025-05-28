@@ -32,6 +32,7 @@ class Node {
       
       if(isleaf(root)){
           ans.push_back(root->data);
+          return;
    }
    if(root->left)leafn(root->left, ans);
    if(root->right)leafn(root->right, ans);
