@@ -5,37 +5,32 @@ struct Item{
     int weight;
 };
 */
-
 class Solution {
-  public:
+public:
     double fractionalKnapsack(vector<int>& val, vector<int>& wt, int capacity) {
-        // code here
-         int n = val.size();
+        int n = val.size();
+        vector<pair<double, int>> ratio(n);
 
-        // Create a vector of tuples: {value, weight, value/weight}
-        vector<tuple<int, int, double>> items;
+        // Compute value-to-weight ratio
         for (int i = 0; i < n; i++) {
-            double ratio = (double)val[i] / wt[i];
-            items.push_back(make_tuple(val[i], wt[i], ratio));
+            ratio[i] = { (double)val[i] / wt[i], i };
         }
 
-        // Sort by value/weight ratio in descending order
-        sort(items.begin(), items.end(), [](const auto& a, const auto& b) {
-            return get<2>(a) > get<2>(b); // Compare ratios
+        // Sort in descending order of ratio using lambda
+        sort(ratio.begin(), ratio.end(), [](pair<double, int> a, pair<double, int> b) {
+            return a.first > b.first;
         });
 
         double ans = 0.0;
 
-        for (const auto& item : items) {
-            int value = get<0>(item);
-            int weight = get<1>(item);
-            double ratio = get<2>(item);
-
-            if (capacity >= weight) {
-                ans += value;
-                capacity -= weight;
+        for (int i = 0; i < n; i++) {
+            int index = ratio[i].second;
+            if (wt[index] <= capacity) {
+                ans += val[index];
+                capacity -= wt[index];
             } else {
-                ans += ratio * capacity;
+                double r = ratio[i].first;
+                ans += capacity * r;
                 break;
             }
         }
